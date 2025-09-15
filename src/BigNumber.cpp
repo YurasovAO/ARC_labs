@@ -3,6 +3,10 @@
 #include <stdio.h>
 #include "stdlib.h"
 #include <math.h>
+
+
+#define max(a,b) {a>b ? a : b}
+#define min(a,b) {a<b ? a : b}
 int BigNumber::check_number(char* number){
 
     for(int i=0;i < strlen(number);i++){
@@ -58,8 +62,8 @@ int BigNumber::get_size_of_number(char* number){
 }
 
 BigNumber::BigNumber(){
-    num=(char*)calloc(2,sizeof(char));
-    len=1;
+    num=NULL;
+    len=0;
     sign=true;
 }
 
@@ -80,14 +84,122 @@ void BigNumber::show_val(){
 BigNumber BigNumber::operator+(BigNumber b){
     BigNumber result;
 
-    int len_a=strlen(this->num);
-    int len_b=strlen(b.num);
+    ssize_t len_a=strlen(this->num);
+    ssize_t len_b=strlen(b.num);
 
+    //Определение знака результата операции
     if(len_a > len_b) { result.sign=this->sign;}
     else if(len_b > len_a) {result.sign=b.sign;}
-    else {result.sign=true;}   
+    else {  
+        if(this->sign == true && b.sign == true){
+            result.sign =true;
+        }
+        else if (this->sign == false && b.sign == false){
+            result.sign=false;
+        }
+        else{
+            result.num[0]='0';
+            result.num[1]='\0';
+        }
+    }
+
+    int l=max(len_a,len_b);
+    l+=2;//1 под возможный перенос из-за увеличения разрядности и 1 для \0
+    result.num=(char*)calloc(l,sizeof(char));
+    result.num[strlen(result.num)-1]='\0';
+
+
+    bool perenos=false;
+    char* lead=NULL;
+    char* submit=NULL;
+
+    int submit_len=0;
+
+    char l_1[2];
+    char s_1[2];
+
+    l_1[1]='\0';
+    s_1[1]='\0';
+    
+    ssize_t min=0;
+    if(len_a > len_b){
+        min=b.len;
+        lead=b.num;
+        submit=this->num;
+        submit_len=this->len;
+
+    }
+    else{
+        min=this->len;
+        lead=this->num;
+        submit=b.num;
+        submit_len=b.len;
+    } 
+    for(int u=0;u<strlen(result.num) - min;u++){
+        result.num[u]='0';
+    }
+    ssize_t res;
+    char buff[2];
+    buff[1]='\0';
+
+    
+    for (int i=0;i< min;i++){
+        
+        //Проверка наличия переноса из предыдущего разряда
+
+        //Поразрядное сложение
+        l_1[0]=lead[strlen(lead)-i-1];
+        s_1[0]=submit[strlen(submit)-i-1];
+        res=atoi(l_1) + atoi(s_1) + perenos;
+
+        if(res<10){
+            sprintf(buff,"%d",res);
+            result.num[strlen(result.num)-i-1]=buff[0];
+            printf("The sum res is :%c\n",result.num[strlen(result.num)-i-1]);
+            perenos =false;
+        }
+        else{
+            sprintf(buff,"%d",res%10);
+            result.num[strlen(result.num)-i-1]=buff[0];
+            printf("The sum res is :%c\n",result.num[strlen(result.num)-i-1]);
+            perenos =true;
+        }
+    }
+    printf("The perenos : %d\n",perenos);
+    printf("Result : %s\n",result.num);
+    
+    for(int y=0;y<strlen(result.num);y++){
+        if(result.num[y]=='\0'){
+            printf("yy%c\n",'\0');
+        }
+        else{
+            printf("%c\n",result.num[y]);
+        }
+    }
+    // for(int j=0;j<submit_len -min;j++){
+    //     if(perenos){
+    //         s_1[0]=submit[strlen(submit)-min-j-2];
+    //         res=atoi(s_1) + perenos;
+    //         if(res>=10) {sprintf(buff,"%d",res%10);perenos=true;} else {sprintf(buff,"%d",res);perenos=false;}
+    //         printf("The res:%d",res);
+    //         result.num[strlen(result.num)-min-j-2]=buff[0];
+    //         printf("The result: %c\n",result.num[strlen(result.num)-min-j-2]);
+
+    //     }
+    //     else{
+    //         s_1[0]=submit[strlen(submit)-min-j-2];
+    //         res=atoi(s_1);
+    //         sprintf(buff,"%d",res);
+    //         result.num[strlen(result.num)-min-j-1]=buff[0];
+    //         printf("The result: %c\n",result.num[strlen(result.num)-min-j-2]);
+    //     }
+         
+    // }
 }
 
+
+
+//work in progress
 BigNumber BigNumber::operator*(BigNumber b){
     BigNumber result;
 
@@ -135,6 +247,9 @@ BigNumber BigNumber::operator*(BigNumber b){
 
 
 
+
+
+//Этот работает
 BigNumber BigNumber::operator=(BigNumber b){
     this->num=b.num;
     this->sign=b.sign;

@@ -10,8 +10,7 @@ int main(int argc,char**argv){
 
     BigNumber num(argv[1]);
     BigNumber num2(argv[2]);
-    BigNumber res =num;
-    res.show_val();
+    num + num2;
     return 0;
 }
 
