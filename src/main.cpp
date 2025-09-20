@@ -10,7 +10,7 @@ int main(int argc,char**argv){
 
     BigNumber num(argv[1]);
     BigNumber num2(argv[2]);
-    num + num2;
+    num-num2;
     return 0;
 }
 
