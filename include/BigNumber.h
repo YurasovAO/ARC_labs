@@ -8,14 +8,24 @@ class BigNumber{
     int check_number(char* number);
     int get_size_of_number(char* number);
 
-    BigNumber summ_numbers(BigNumber* a,BigNumber b,BigNumber res,int offset);
+    std::vector<char>  summ_numbers(BigNumber* a,BigNumber b);
+    std::vector<char>  diff_numbers(BigNumber* a,BigNumber b);
+    std::vector<char>  diff_numbers(BigNumber a,BigNumber* b);
+    std::vector<char>  prod_numbers(std::vector<char> a, std::vector<char>b);
 
+    void summ_operation_plan(void);
     public:
-        void show_val();
         BigNumber operator+(BigNumber b);
         BigNumber operator-(BigNumber b);
         BigNumber operator*(BigNumber b);
         BigNumber operator=(BigNumber a);
+
+        friend bool get_sign_of_summ_operation(BigNumber* a,BigNumber b);
+        friend bool get_sign_of_diff_operation(BigNumber* a,BigNumber b);
+        friend bool get_sign_of_prod_operation(BigNumber* a,BigNumber b);
+
+        void print_value(void);
+
         BigNumber(char* number);
         BigNumber();
 };
